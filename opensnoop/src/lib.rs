@@ -1,7 +1,5 @@
 use aya::{
-    maps::{
-        perf::AsyncPerfEventArrayBuffer, AsyncPerfEventArray, MapData,
-    },
+    maps::{perf::AsyncPerfEventArrayBuffer, AsyncPerfEventArray, MapData},
     util::online_cpus,
     Ebpf,
 };
@@ -27,8 +25,8 @@ pub async fn read_event(
                     let comm = cstr_slice_2_rstr(&data.comm);
                     let filename = cstr_slice_2_rstr(&data.filename);
                     println!(
-                        "{}({}) open {}({}) return {}",
-                        comm, data.pid, filename, data.fd, data.errno
+                        "{:>6} {:>16} {:>4} {:>3} {}",
+                        data.pid, comm, data.fd, data.errno, filename,
                     );
                 }
             }
@@ -42,6 +40,11 @@ pub async fn read_event(
 pub async fn deal_event(ebpf: &mut Ebpf) -> anyhow::Result<()> {
     let mut events =
         AsyncPerfEventArray::try_from(ebpf.take_map("open_events").ok_or(()).unwrap())?;
+    println!("Tracing open syscalls... Hit Ctrl-C to end.");
+    println!(
+        "{:6} {:16} {:4} {:3} {}",
+        "PID", "COMM", "FD", "ERR", "FILENAME"
+    );
     for cpu_id in online_cpus().map_err(|e| e.1)? {
         let buf = events.open(cpu_id, None)?;
         tokio::spawn(async move { read_event(cpu_id, buf).await });

@@ -99,12 +99,7 @@ fn try_sys_exit_open(ctx: TracePointContext) -> Result<u32, u32> {
         filename,
         pid: ctx.pid(),
         fd: ret as u64,
-        comm: ctx.command().map_err(|e| {
-            unsafe {
-                helpers::bpf_printk!(b"ctx.command() err=%ld tid=%lu .......", e, tid);
-            }
-            e as u32
-        })?,
+        comm: ctx.command().map_err(|e| e as u32)?,
     };
     OPEN_EVENTS.output(&ctx, &data, 0);
     let _ = OPEN_MAPS.remove(&tid);

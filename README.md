@@ -1,5 +1,14 @@
 # opensnoop
 
+A simple eBPF program that prints information about open/openat syscalls.
+
+This is a rust/aya version of the bcc tool of the same name.
+## Usage
+```shell
+opensnoop
+```
+
+
 ## Prerequisites
 
 1. stable rust toolchains: `rustup toolchain install stable`
