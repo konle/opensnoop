@@ -47,32 +47,7 @@ async fn main() -> anyhow::Result<()> {
     sys_exit_openat_program.load()?;
     sys_exit_openat_program.attach("syscalls", "sys_exit_openat")?;
     //
-    opensnoop::deal_event(&mut ebpf);
- 
-/*
-    for cpu_id in online_cpus().unwrap(){
-        let mut buf = perf_array.open(cpu_id, None)?;
-        tokio::task::spawn(async move{
-            let mut buffers = (0..10)
-                .map(|_| bytes::BytesMut::with_capacity(1024))
-                .collect::<Vec<_>>();
-            loop{
-                let events = buf.read_events(&mut buffers).await.unwrap();
-                for i in 0..events.read{
-                    let buf = &mut buffers[i];
-                    let ptr = buf.as_ptr() as * const OpenInfo;
-                    let data = unsafe {
-                        ptr.read_unaligned()
-                    };
-                    let comm = cstr_slice_2_rstr(&data.comm);
-                    let filename = cstr_slice_2_rstr(&data.filename);
-                    println!("{}({}) open {}({}) return {}",comm, data.pid, filename, data.fd, data.errno);
-                }
-            }
-        });
-    }
-     */
-
+    opensnoop::deal_event(&mut ebpf).await?;
 
     let ctrl_c = signal::ctrl_c();
     println!("Waiting for Ctrl-C...");
