@@ -1,0 +1,17 @@
+[package]
+name = "opensnoop-ebpf"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+opensnoop-common = { path = "../opensnoop-common" }
+
+aya-ebpf = { workspace = true }
+aya-log-ebpf = { workspace = true }
+
+[build-dependencies]
+which = { workspace = true }
+
+[[bin]]
+name = "opensnoop"
+path = "src/main.rs"
