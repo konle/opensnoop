@@ -1,6 +1,6 @@
 use aya::{
     maps::{
-        perf::AsyncPerfEventArrayBuffer, perf::PerfEventArrayBuffer, AsyncPerfEventArray, MapData,
+        perf::AsyncPerfEventArrayBuffer, AsyncPerfEventArray, MapData,
     },
     util::online_cpus,
     Ebpf,

@@ -1,10 +1,7 @@
-use aya::{maps::{AsyncPerfEventArray, PerfEventArray}, programs::TracePoint, util::online_cpus, Ebpf};
+use aya::programs::TracePoint;
 #[rustfmt::skip]
 use log::{debug, warn};
-use opensnoop_common::OpenLog;
 use tokio::signal;
-
-use opensnoop::cstr_slice_2_rstr;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -34,16 +31,20 @@ async fn main() -> anyhow::Result<()> {
         // This can happen if you remove all log statements from your eBPF program.
         warn!("failed to initialize eBPF logger: {}", e);
     }
-    let sys_exit_open_program: &mut TracePoint = ebpf.program_mut("sys_exit_open").unwrap().try_into()?;
+    let sys_exit_open_program: &mut TracePoint =
+        ebpf.program_mut("sys_exit_open").unwrap().try_into()?;
     sys_exit_open_program.load()?;
     sys_exit_open_program.attach("syscalls", "sys_exit_open")?;
-    let sys_enter_open_program: &mut TracePoint = ebpf.program_mut("sys_enter_open").unwrap().try_into()?;
+    let sys_enter_open_program: &mut TracePoint =
+        ebpf.program_mut("sys_enter_open").unwrap().try_into()?;
     sys_enter_open_program.load()?;
     sys_enter_open_program.attach("syscalls", "sys_enter_open")?;
-    let sys_enter_openat_program: &mut TracePoint = ebpf.program_mut("sys_enter_openat").unwrap().try_into()?;
+    let sys_enter_openat_program: &mut TracePoint =
+        ebpf.program_mut("sys_enter_openat").unwrap().try_into()?;
     sys_enter_openat_program.load()?;
     sys_enter_openat_program.attach("syscalls", "sys_enter_openat")?;
-    let sys_exit_openat_program: &mut TracePoint = ebpf.program_mut("sys_exit_openat").unwrap().try_into()?;
+    let sys_exit_openat_program: &mut TracePoint =
+        ebpf.program_mut("sys_exit_openat").unwrap().try_into()?;
     sys_exit_openat_program.load()?;
     sys_exit_openat_program.attach("syscalls", "sys_exit_openat")?;
     //
